@@ -23,6 +23,7 @@ public class Employee {
 	private String name;
 	private int departmentId;
 	private String role;
+	private int salary;
 	
 	// with ID
 	public Employee(int employeeId, String name, int departmentId, String role, int salary) {
@@ -73,7 +74,6 @@ public class Employee {
 	public void setSalary(int salary) {
 		this.salary = salary;
 	}
-	private int salary;
 
 	@Override
 	public String toString() {
@@ -81,8 +81,4 @@ public class Employee {
 				+ role + ", salary=" + salary + "]";
 	}
 
-	
-	
-	
-	
 }

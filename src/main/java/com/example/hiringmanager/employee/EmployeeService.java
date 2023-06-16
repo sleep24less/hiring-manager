@@ -7,6 +7,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class EmployeeService {
@@ -18,11 +20,23 @@ public class EmployeeService {
 	}
 	
 	// GET employees
-	public final List<Employee> getEmployees() {
+	public List<Employee> getEmployees() {
 		try (Session session = sessionFactory.openSession()) {
 			return session.createQuery("FROM employee", Employee.class).list();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to get employees", e);
+		}
+	}
+	
+	public Employee getEmployeeById(int employeeId) {
+		try (Session session = sessionFactory.openSession()) {
+			Employee employee = session.get(Employee.class, employeeId);
+			if(employee == null) {
+				throw new RuntimeException("Employee with ID: " + employeeId + " doesn't exist");
+			}
+			return session.get(Employee.class, employeeId);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to get employee by ID: " + employeeId, e);
 		}
 	}
 	
@@ -57,15 +71,39 @@ public class EmployeeService {
 	}
 	
 	// UPDATE employee
-	public void updateEmployee(Employee employee) {
+	public void updateEmployee(int employeeId, String name, int departmentId, String role, int salary) {
 		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();
-			Employee existingEmployee = session.get(Employee.class, employee.getEmployeeId());
+			Employee existingEmployee = session.get(Employee.class, employeeId);
 			if (existingEmployee == null) {
-				throw new RuntimeException("Employee with ID: " + employee.getEmployeeId() + " doesn't exists");
+				throw new RuntimeException("Employee with ID: " + employeeId + " doesn't exists");
 			}	
-			session.update(existingEmployee);
-			session.getTransaction().commit();
+	        
+	        if (name != null) {
+	            String[] nameParts = name.trim().split("\\s+");
+	            StringBuilder modifiedName = new StringBuilder(nameParts[0]);
+	            if (nameParts.length > 1) {
+	                String secondWord = nameParts[1];
+	                modifiedName.append(" ").append(secondWord.charAt(0)).append(".");
+	            }
+	            existingEmployee.setName(modifiedName.toString());
+	        }
+	        
+	        if (departmentId != 0) {
+	            existingEmployee.setDepartmentId(departmentId);
+	        }
+	        
+	        if (role != null) {
+	            existingEmployee.setRole(role);
+	        }
+	        
+	        if (salary < 22000) {
+	        	throw new RuntimeException("Employee salary cannot be smaller than 22000");
+	        }
+	        existingEmployee.setSalary(salary);
+
+	        session.update(existingEmployee);
+	        session.getTransaction().commit();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update the employee", e);
 		}

@@ -7,8 +7,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.transaction.Transactional;
 
@@ -24,13 +22,13 @@ public class EmployeeService {
 	// GET employees
 	public List<Employee> getEmployees() {
 		try (Session session = sessionFactory.openSession()) {
-			return session.createQuery("FROM employee", Employee.class).list();
+			return session.createQuery("FROM Employee", Employee.class).list();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to get employees", e);
 		}
 	}
 	
-	public Employee getEmployeeById(int employeeId) {
+	public Employee getEmployeeById(Long employeeId) {
 		try (Session session = sessionFactory.openSession()) {
 			Employee employee = session.get(Employee.class, employeeId);
 			if(employee == null) {
@@ -44,21 +42,25 @@ public class EmployeeService {
 	
 	// ADD employee
 	public void addNewEmployee(Employee employee) {
-		try (Session session = sessionFactory.openSession()) {
-			session.beginTransaction();
-			Employee existingEmployee = session.get(Employee.class, employee.getEmployeeId());
-			if (existingEmployee != null) {
-				throw new RuntimeException("Employee with ID: " + employee.getEmployeeId() + " already exists");
-			}
-			session.save(employee);
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to add a new employee", e);
-		}
+	    try (Session session = sessionFactory.openSession()) {
+	        session.beginTransaction();
+	        Query<Employee> query = session.createQuery("FROM Employee WHERE employeeId = :employeeId", Employee.class);
+	        query.setParameter("employeeId", employee.getEmployeeId());
+	        Employee existingEmployee = query.uniqueResult();
+	        if (existingEmployee != null) {
+	            throw new RuntimeException("Employee with ID: " + employee.getEmployeeId() + " already exists");
+	        }
+	        session.save(employee);
+	        session.getTransaction().commit();
+	    } catch (Exception e) {
+	        throw new RuntimeException("Failed to add a new employee", e);
+	    }
 	}
+
+
 	
 	// DELETE employee
-	public void deleteEmployee(int employeeId) {
+	public void deleteEmployee(Long employeeId) {
 		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();
 			Employee existingEmployee = session.get(Employee.class, employeeId);
@@ -74,7 +76,7 @@ public class EmployeeService {
 	
 	// UPDATE employee
 	@Transactional
-	public void updateEmployee(int employeeId, String name, int departmentId, String role, int salary) {
+	public void updateEmployee(Long employeeId, String name, int departmentId, String role, int salary) {
 		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();
 			Employee existingEmployee = session.get(Employee.class, employeeId);

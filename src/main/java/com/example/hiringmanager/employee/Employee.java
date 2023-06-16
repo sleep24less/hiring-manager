@@ -1,32 +1,32 @@
 package com.example.hiringmanager.employee;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
+@Table
 public class Employee {
 	
 	@Id
-	@SequenceGenerator (
-			name = "employee_sequence",
-			sequenceName = "employee_sequence",
-			allocationSize = 1
-	)
-	@GeneratedValue(
-			strategy = GenerationType.SEQUENCE,
-			generator = "employee_sequence"
-	)
-	private int employeeId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_sequence")
+    @SequenceGenerator(name = "employee_sequence", sequenceName = "employee_sequence", allocationSize = 1)
+	private Long employeeId;
 	private String name;
 	private int departmentId;
 	private String role;
 	private int salary;
 	
+	public Employee() {
+
+	}
+
 	// with ID
-	public Employee(int employeeId, String name, int departmentId, String role, int salary) {
+	public Employee(Long employeeId, String name, int departmentId, String role, int salary) {
 		super();
 		this.employeeId = employeeId;
 		this.name = name;
@@ -44,10 +44,10 @@ public class Employee {
 		this.salary = salary;
 	}
 
-	public int getEmployeeId() {
+	public Long getEmployeeId() {
 		return employeeId;
 	}
-	public void setEmployeeId(int employeeId) {
+	public void setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
 	}
 	public String getName() {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "api/v1/hiring") 
+@RequestMapping(path = "api/v1/employee") 
 public class EmployeeController {
 	
 	private final EmployeeService employeeService;
@@ -35,13 +35,13 @@ public class EmployeeController {
 	}
 	
 	@DeleteMapping(path = "{EmployeeId}")
-	public void deleteEmployee(@PathVariable("EmployeeId") int employeeId) {
+	public void deleteEmployee(@PathVariable("EmployeeId") Long employeeId) {
 		employeeService.deleteEmployee(employeeId);
 	}
 	
 	@PutMapping(path = "{employeeId}")
 	public void updateEmployee(
-			@PathVariable("employeeId") int employeeId,
+			@PathVariable("employeeId") Long employeeId,
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) int departmentId,
 			@RequestParam(required = false) String role,

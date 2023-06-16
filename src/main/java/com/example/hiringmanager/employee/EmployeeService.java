@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class EmployeeService {
 	private final SessionFactory sessionFactory;
@@ -71,6 +73,7 @@ public class EmployeeService {
 	}
 	
 	// UPDATE employee
+	@Transactional
 	public void updateEmployee(int employeeId, String name, int departmentId, String role, int salary) {
 		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();

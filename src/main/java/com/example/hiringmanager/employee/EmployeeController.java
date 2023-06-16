@@ -13,12 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-//API layer / Controller in MVC
-
-//CIA PAGAL IDEJA LIEKA SAME, naudoti @Autowired constructoriuj
-
 @RestController
-@RequestMapping(path = "api/v1/hiring") // kai sitas iskviestas Autowired sukurs objekta kad suveiktu metodas kazkuris
+@RequestMapping(path = "api/v1/hiring") 
 public class EmployeeController {
 	
 	private final EmployeeService employeeService;

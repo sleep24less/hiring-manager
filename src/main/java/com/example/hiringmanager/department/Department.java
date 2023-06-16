@@ -1,15 +1,20 @@
 package com.example.hiringmanager.department;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
+import com.example.hiringmanager.employee.Employee;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -28,14 +33,20 @@ public class Department {
 
     @Column(name = "manager_id")
     private Long managerId;
-
-    private List<Integer> listOfEmployees;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy="department", cascade = CascadeType.ALL)
+    private Set<Employee> listOfEmployees = new HashSet<>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "employee_id")
+    private Set<Long> employeeIds = new HashSet<>();
 
 	public Department() {
 
 	}
 
-	public Department(Long departmentId, String departmentName, Long managerId, List<Integer> listOfEmployees) {
+	public Department(Long departmentId, String departmentName, Long managerId, Set<Employee> listOfEmployees) {
 		super();
 		this.departmentId = departmentId;
 		this.departmentName = departmentName;
@@ -43,7 +54,7 @@ public class Department {
 		this.listOfEmployees = listOfEmployees;
 	}
 
-	public Department(String departmentName, Long managerId, List<Integer> listOfEmployees) {
+	public Department(String departmentName, Long managerId, Set<Employee> listOfEmployees) {
 		super();
 		this.departmentName = departmentName;
 		this.managerId = managerId;
@@ -76,12 +87,16 @@ public class Department {
 		this.managerId = managerId;
 	}
 
-	public List<Integer> getListOfEmployees() {
-		return listOfEmployees;
+	public Set<Long> getListOfEmployees() {
+	    return employeeIds;
 	}
 
-	public void setListOfEmployees(List<Integer> listOfEmployees) {
+	public void setListOfEmployees(Set<Employee> listOfEmployees) {
 		this.listOfEmployees = listOfEmployees;
+	}
+	
+	public Set<Long> getEmployeeIds() {
+	    return employeeIds;
 	}
 
 	@Override

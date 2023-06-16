@@ -8,6 +8,8 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.hiringmanager.department.Department;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -76,7 +78,7 @@ public class EmployeeService {
 	
 	// UPDATE employee
 	@Transactional
-	public void updateEmployee(Long employeeId, String name, int departmentId, String role, int salary) {
+	public void updateEmployee(Long employeeId, String name, Department department, String role, int salary) {
 		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();
 			Employee existingEmployee = session.get(Employee.class, employeeId);
@@ -94,8 +96,8 @@ public class EmployeeService {
 	            existingEmployee.setName(modifiedName.toString());
 	        }
 	        
-	        if (departmentId != 0) {
-	            existingEmployee.setDepartmentId(departmentId);
+	        if (department != null) {
+	            existingEmployee.setDepartment(department);
 	        }
 	        
 	        if (role != null) {
@@ -115,22 +117,22 @@ public class EmployeeService {
 	}
 	
 	// CALCULATE average salary by department ID
-	public double calculateAvgSalary(int departmentId) {
+	public double calculateAvgSalary(Department department) {
 	    try (Session session = sessionFactory.openSession()) {
 	    	// Get count of employees with given department id
-	        Query<Long> countQuery = session.createQuery("SELECT COUNT(e) FROM Employee e WHERE e.departmentId = :departmentId", Long.class);
-	        countQuery.setParameter("departmentId", departmentId);
+	        Query<Long> countQuery = session.createQuery("SELECT COUNT(e) FROM Employee e WHERE e.department = :department", Long.class);
+	        countQuery.setParameter("department", department);
 	        Long employeeCount = countQuery.getSingleResult();
 	        // check if given department has any employees
 	        if (employeeCount == 0) {
-	            throw new RuntimeException("No employees found for department ID: " + departmentId);
+	            throw new RuntimeException("No employees found for department ID: " + department);
 	        }
 	        
-	        Query<Double> query = session.createQuery("SELECT AVG(e.salary) FROM Employee e WHERE e.departmentId = :departmentId", Double.class);
-	        query.setParameter("departmentId", departmentId);
+	        Query<Double> query = session.createQuery("SELECT AVG(e.salary) FROM Employee e WHERE e.department = :department", Double.class);
+	        query.setParameter("department", department);
 	        return query.getSingleResult();
 	    } catch (Exception e) {
-	        throw new RuntimeException("Failed to calculate the average salary for department ID: " + departmentId, e);
+	        throw new RuntimeException("Failed to calculate the average salary for department ID: " + department, e);
 	    }
 	}
 

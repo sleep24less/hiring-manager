@@ -1,13 +1,18 @@
 package com.example.hiringmanager.project;
 
-import java.time.LocalDate;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.example.hiringmanager.employee.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -25,6 +30,9 @@ public class Project {
 	@Transient
 	private Date projectStartDate;
 	private Date projectDueDate;
+	
+	@ManyToMany(mappedBy = "projects")
+    private Set<Employee> employees = new HashSet<>();
 	
 	
 	public Project() {

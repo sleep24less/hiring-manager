@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.hiringmanager.department.Department;
+
 @RestController
 @RequestMapping(path = "api/v1/employee") 
 public class EmployeeController {
@@ -43,10 +45,10 @@ public class EmployeeController {
 	public void updateEmployee(
 			@PathVariable("employeeId") Long employeeId,
 			@RequestParam(required = false) String name,
-			@RequestParam(required = false) int departmentId,
+			@RequestParam(required = false) Department department,
 			@RequestParam(required = false) String role,
 			@RequestParam(required = false) int salary) {
-		employeeService.updateEmployee(employeeId, name, departmentId, role, salary);
+		employeeService.updateEmployee(employeeId, name, department, role, salary);
 	}
 	
 }
